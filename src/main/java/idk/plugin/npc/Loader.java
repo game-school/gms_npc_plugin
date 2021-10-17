@@ -1,6 +1,7 @@
 package idk.plugin.npc;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.utils.TextFormat;
@@ -19,6 +20,7 @@ import java.util.Hashtable;
 public class Loader extends PluginBase {
 
     public static Loader plugin;
+    public static ConsoleCommandSender s_console;
 
     public static File getPath(String folder) {
         File folderDir = new File(plugin.getServer().getDataPath(), folder);
@@ -32,6 +34,7 @@ public class Loader extends PluginBase {
     @Override
     public void onEnable() {
         plugin = this;
+        Log.s_console = getServer().getConsoleSender();
 
         skinsDirectory = getPath("skins");
         talkDirectory = getPath("dialogue");

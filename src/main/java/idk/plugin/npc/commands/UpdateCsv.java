@@ -2,6 +2,7 @@ package idk.plugin.npc.commands;
 
 import cn.nukkit.Player;
 import idk.plugin.npc.Loader;
+import idk.plugin.npc.Log;
 
 import javax.swing.*;
 import java.io.*;
@@ -30,7 +31,10 @@ public class UpdateCsv {
                 if (!line.isEmpty()) {
                     String[] attrs = line.split(",");
                     if (attrs.length == 2) {
-                        dlgs.put(cleanStr(attrs[0]), attrs[1].replace('¬', ','));
+                        String key = cleanStr(attrs[0]);
+                        String value = attrs[1].replace('¬', ',');
+                        dlgs.put(key, value);
+                        Log.debug(String.format("%s => %s", key, value));
                     }
                 }
 
@@ -101,6 +105,9 @@ public class UpdateCsv {
 
         String worldName = user.level.getName();
         File filepath = new File(Loader.getPath("dialogue"), worldName + ".csv");
+
+        Log.debug(String.format("Opening file path: %s [Key = %s]", filepath.toString(), diaKey));
+
         HashMap<String, String> dlgs = loadDialogueFile(filepath.toString());
 
         if (dlgs.containsKey(dk))
