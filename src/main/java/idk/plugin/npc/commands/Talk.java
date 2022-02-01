@@ -53,6 +53,9 @@ public class Talk extends Command {
                 return false;
             }
 
+            if (!textFound)
+                return false;
+
             String cleanText = talkText.replaceAll("\r", ""); // What an absolute nightmare this line was to troubleshoot!
 
             String titleName = entName;

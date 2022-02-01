@@ -14,16 +14,22 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class UpdateCsv {
-
-    public static String repDialogue;
     public static String dkChange;
+    static HashMap<String, HashMap<String, String>> s_loadedDlgs = new HashMap<>();
 
     public static String cleanStr(String s) {
         return s.replaceAll("[,¬\n\r¦]", "");
     }
 
     public static HashMap<String, String> loadDialogueFile(String filename) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        if (s_loadedDlgs.containsKey(filename)) {
+            Log.debug(String.format("Cached: %s", filename));
+            return s_loadedDlgs.get(filename);
+        }
+
+        Log.debug(String.format("Loading: %s", filename));
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-1"))) {
             HashMap<String, String> dlgs = new HashMap<>();
             String line = br.readLine();
 
@@ -40,6 +46,9 @@ public class UpdateCsv {
 
                 line = br.readLine();
             }
+
+            Log.debug(String.format("Loaded and caching: %s", filename));
+            s_loadedDlgs.put(filename, dlgs);
 
             return dlgs;
         }

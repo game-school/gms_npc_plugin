@@ -36,6 +36,8 @@ public class Loader extends PluginBase {
         plugin = this;
         Log.s_console = getServer().getConsoleSender();
 
+        Log.debug("Initialising NPC plugin ...");
+
         skinsDirectory = getPath("skins");
         talkDirectory = getPath("dialogue");
 
@@ -67,6 +69,8 @@ public class Loader extends PluginBase {
 
         getServer().getCommandMap().register("talk", new Talk());
         getServer().getCommandMap().register("settalk", new SetTalk());
+
+        Log.debug("NPC plugin successfully initialised!");
     }
 
     private void registerListeners() {
