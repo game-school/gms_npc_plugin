@@ -6,16 +6,13 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.TextFormat;
 //import idk.plugin.npc.Loader;
-import idk.plugin.npc.listeners.entity.EntityDamageListener;
+import idk.plugin.npc.dialogue.TextCleaner;
+import idk.plugin.npc.dialogue.UpdateCsv;
 import ru.nukkitx.forms.elements.SimpleForm;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 
 import static idk.plugin.npc.listeners.entity.EntityDamageListener.entName;
-import static idk.plugin.npc.listeners.entity.EntityDamageListener.entType;
 
 public class Talk extends Command {
 
@@ -56,7 +53,9 @@ public class Talk extends Command {
             if (!textFound)
                 return false;
 
-            String cleanText = talkText.replaceAll("\r", ""); // What an absolute nightmare this line was to troubleshoot!
+            TextCleaner tc = new TextCleaner(talkText);
+            String cleanText = tc.getCleanedText();
+            //String cleanText = talkText.replaceAll("\r", ""); // What an absolute nightmare this line was to troubleshoot!
 
             String titleName = entName;
             String finalName = "";

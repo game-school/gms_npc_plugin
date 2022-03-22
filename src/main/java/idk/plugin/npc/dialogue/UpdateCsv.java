@@ -1,4 +1,4 @@
-package idk.plugin.npc.commands;
+package idk.plugin.npc.dialogue;
 
 import cn.nukkit.Player;
 import idk.plugin.npc.Loader;
@@ -18,7 +18,7 @@ public class UpdateCsv {
     static HashMap<String, HashMap<String, String>> s_loadedDlgs = new HashMap<>();
 
     public static String cleanStr(String s) {
-        return s.replaceAll("[,¬\n\r¦]", "");
+        return s;//.replaceAll("[,¬\n\r¦]", "");
     }
 
     public static HashMap<String, String> loadDialogueFile(String filename) throws IOException {
@@ -106,7 +106,6 @@ public class UpdateCsv {
      *
      * @param diaKey Talk text save name
      * @param user Player object to determine world name to append to the filepath
-     * @param give True = Returns the text value associated with diaKey, False = Returns a keyword to confirm whether the entry exists or not
      * @return A string, either the dialogue found, or a keyword representing the search result, to be checked by Talk
      */
     public static String findDialogue(String diaKey, Player user) throws IOException {
