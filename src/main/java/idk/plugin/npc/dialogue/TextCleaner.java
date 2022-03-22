@@ -35,7 +35,7 @@ public class TextCleaner {
         if (sourceText.contains("\"")) cleanText = fixDoubleQuotes(sourceText);
 
         for (Map.Entry<String, String> e : substitutions.entrySet()) {
-            Log.debug(e.getKey());
+            //Log.debug(e.getKey());
             if (cleanText.contains(e.getKey())) cleanText = cleanText.replaceAll(e.getKey(), e.getValue());
         }
 
