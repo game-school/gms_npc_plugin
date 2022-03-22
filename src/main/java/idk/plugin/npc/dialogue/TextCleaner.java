@@ -1,6 +1,8 @@
 package idk.plugin.npc.dialogue;
 
 
+import idk.plugin.npc.Log;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -17,8 +19,9 @@ public class TextCleaner {
             {"¬", ","}, //Comma - contents creators use the NOT SIGN as an escape character for commas, due to their role as delimiters in CSVs (Unicode: U+002C, ASCII: 44, hex: 0x2C)
             {"¦", "\n"}, //New Line, the Carriage Return of which is later removed (Unicode: (U+000D, U+000A), ASCII: (13, 10), hex: (0x0D, 0x0A) (two values - one for Line Feed, the other for Carriage Return))
             {"\r", ""}, // Carriage Return (Unicode: U+000D, ASCII: 13, hex: 0x0d)
-            {"’", "'"}, // Right single quotation marks (Unicode: U+2019, ASCII: N/A, hex: 0xE2 0x80 0x99 (e28099))
-            {"…", "..."}, // Horizontal ellipsis (Unicode: U+2026, ASCII: N/A, hex: 0xE2 0x80 0xA6 (e280a6))
+            {"’", "'"}, // Right Single Quotation Marks (Unicode: U+2019, ASCII: N/A, hex: 0xE2 0x80 0x99 (e28099))
+            {"…", "..."}, // Horizontal Ellipsis (Unicode: U+2026, ASCII: N/A, hex: 0xE2 0x80 0xA6 (e280a6))
+            {"–", "-"}, // En Dash (Unicode: U+2013, ASCII: N/A, hex: 0xE2 0x80 0x93 (e28093))
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     public TextCleaner(String sourceText){
@@ -32,6 +35,7 @@ public class TextCleaner {
         if (sourceText.contains("\"")) cleanText = fixDoubleQuotes(sourceText);
 
         for (Map.Entry<String, String> e : substitutions.entrySet()) {
+            Log.debug(e.getKey());
             if (cleanText.contains(e.getKey())) cleanText = cleanText.replaceAll(e.getKey(), e.getValue());
         }
 
@@ -44,7 +48,7 @@ public class TextCleaner {
         StringBuilder sb = new StringBuilder(sourceText);
         if (sourceText.contains("\"")) {
             if (sourceText.charAt(0) ==  '\"' && sourceText.charAt(sourceText.length()-1) ==  '\"') {
-                newText = sb.deleteCharAt(0).deleteCharAt(sourceText.length()-1).toString();
+                newText = sb.deleteCharAt(sourceText.length()-1).deleteCharAt(0).toString();
                 newText = newText.replaceAll("\"\"", "\"");
             }
         }

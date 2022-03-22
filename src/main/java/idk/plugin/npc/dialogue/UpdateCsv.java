@@ -6,9 +6,6 @@ import idk.plugin.npc.Log;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -29,7 +26,7 @@ public class UpdateCsv {
 
         Log.debug(String.format("Loading: %s", filename));
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-1"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"))) { //May need alternate encoding for other platforms - needs testing (was originally ISO-8859-1)
             HashMap<String, String> dlgs = new HashMap<>();
             String line = br.readLine();
 
