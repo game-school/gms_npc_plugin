@@ -44,7 +44,7 @@ public class PlayerMoveListener implements Listener {
                     movePlayerPacket.headYaw = (float) yaw;
                     movePlayerPacket.onGround = entity.onGround;
 
-                    player.directDataPacket(movePlayerPacket);
+                    player.dataPacket(movePlayerPacket);
                 } else {
                     MoveEntityAbsolutePacket moveEntityAbsolutePacket = new MoveEntityAbsolutePacket();
                     moveEntityAbsolutePacket.eid = entity.getId();
@@ -56,7 +56,7 @@ public class PlayerMoveListener implements Listener {
                     moveEntityAbsolutePacket.headYaw = yaw;
                     moveEntityAbsolutePacket.onGround = entity.onGround;
 
-                    player.directDataPacket(moveEntityAbsolutePacket);
+                    player.dataPacket(moveEntityAbsolutePacket);
                 }
             }
         });

@@ -1,4 +1,4 @@
-package idk.plugin.npc.commands;
+package idk.plugin.npc.metadata;
 
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
