@@ -93,13 +93,17 @@ public class UpdateCsv {
      *
      * @param diaKey Talk text save name
      * @param user Player object to determine world name to append to the filepath
-     * @param give True = Returns the text value associated with diaKey, False = Returns a keyword to confirm whether the entry exists or not
+     * //@param give True = Returns the text value associated with diaKey, False = Returns a keyword to confirm whether the entry exists or not
      * @return A string, either the dialogue found, or a keyword representing the search result, to be checked by Talk
      */
     public static String findDialogue(String diaKey, Player user) throws IOException {
         String dk = cleanStr(diaKey);
 
         String worldName = user.level.getName();
+        if(worldName.contains("\\") || worldName.contains("//")){
+            File file = new File(worldName);
+            worldName = file.getName();
+        }
         File filepath = new File(Loader.getPath("dialogue"), worldName + ".csv");
         HashMap<String, String> dlgs = loadDialogueFile(filepath.toString());
 
