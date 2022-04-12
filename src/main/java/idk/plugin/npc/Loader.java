@@ -1,5 +1,6 @@
 package idk.plugin.npc;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.plugin.PluginBase;
@@ -23,8 +24,16 @@ public class Loader extends PluginBase {
     public static ConsoleCommandSender s_console;
 
     public static File getPath(String folder) {
+        Log.debug(String.format("Data path: %s [Sub folder: %s]", plugin.getServer().getDataPath(), folder));
         File folderDir = new File(plugin.getServer().getDataPath(), folder);
         return folderDir;
+    }
+
+    public static String getWorldName(Player user) {
+        String worldName = user.level.getName();
+        File worldNamePath = new File(worldName);
+        worldName = worldNamePath.getName();
+        return worldName;
     }
 
     public File skinsDirectory;

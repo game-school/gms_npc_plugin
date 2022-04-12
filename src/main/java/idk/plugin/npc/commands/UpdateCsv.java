@@ -22,6 +22,8 @@ public class UpdateCsv {
     }
 
     public static HashMap<String, String> loadDialogueFile(String filename) throws IOException {
+        Log.debug(String.format("Loading dialogue file: %s", filename));
+
         if (s_loadedDlgs.containsKey(filename)) {
             Log.debug(String.format("Cached: %s", filename));
             return s_loadedDlgs.get(filename);
@@ -85,7 +87,7 @@ public class UpdateCsv {
      */
     public static boolean updateDialogue(String diaKey, String diaValue, Player user) {
         try {
-            String worldName = user.level.getName();
+            String worldName = Loader.getWorldName(user);
             File filepath = new File(Loader.getPath("dialogue"), worldName+".csv");
             HashMap<String, String> dlgs = loadDialogueFile(filepath.toString());
 
@@ -112,7 +114,7 @@ public class UpdateCsv {
     public static String findDialogue(String diaKey, Player user) throws IOException {
         String dk = cleanStr(diaKey);
 
-        String worldName = user.level.getName();
+        String worldName = Loader.getWorldName(user);
         File filepath = new File(Loader.getPath("dialogue"), worldName + ".csv");
 
         Log.debug(String.format("Opening file path: %s [Key = %s]", filepath.toString(), diaKey));
@@ -134,7 +136,7 @@ public class UpdateCsv {
      */
     public static boolean deleteDialogue(String diaKey, Player user)
     {
-        String worldName = user.level.getName();
+        String worldName = Loader.getWorldName(user);
         File filepath = new File(Loader.getPath("dialogue"), worldName + ".csv");
         String searchKey;
         String rtnDialogue;
