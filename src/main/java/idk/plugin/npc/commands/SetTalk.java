@@ -6,6 +6,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.TextFormat;
 import idk.plugin.npc.Loader;
+import idk.plugin.npc.dialogue.UpdateCsv;
 import ru.nukkitx.forms.elements.SimpleForm;
 
 import javax.swing.*;

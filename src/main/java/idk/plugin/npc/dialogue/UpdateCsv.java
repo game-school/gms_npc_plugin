@@ -1,4 +1,4 @@
-package idk.plugin.npc.commands;
+package idk.plugin.npc.dialogue;
 
 import cn.nukkit.Player;
 import idk.plugin.npc.Loader;
@@ -6,9 +6,6 @@ import idk.plugin.npc.Log;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,7 +15,7 @@ public class UpdateCsv {
     static HashMap<String, HashMap<String, String>> s_loadedDlgs = new HashMap<>();
 
     public static String cleanStr(String s) {
-        return s.replaceAll("[,¬\n\r¦]", "");
+        return s;//.replaceAll("[,¬\n\r¦]", "");
     }
 
     public static HashMap<String, String> loadDialogueFile(String filename) throws IOException {
@@ -31,7 +28,7 @@ public class UpdateCsv {
 
         Log.debug(String.format("Loading: %s", filename));
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "ISO-8859-1"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "Cp1252"))) { //May need alternate encoding for other platforms - needs testing (was originally ISO-8859-1)
             HashMap<String, String> dlgs = new HashMap<>();
             String line = br.readLine();
 

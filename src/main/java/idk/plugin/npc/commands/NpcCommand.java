@@ -7,33 +7,26 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.data.FloatEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.TextFormat;
 import idk.plugin.npc.Loader;
 import idk.plugin.npc.NPC;
 import idk.plugin.npc.entities.EntityNPC;
+import idk.plugin.npc.metadata.GsNpcMetadata;
 import io.netty.util.internal.ThreadLocalRandom;
 import ru.nukkitx.forms.elements.CustomForm;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static cn.nukkit.entity.Entity.DATA_BOUNDING_BOX_HEIGHT;
 import static idk.plugin.npc.NPC.*;
-import static idk.plugin.npc.listeners.entity.EntityDamageListener.entType;
 
 public class NpcCommand extends Command {
 
