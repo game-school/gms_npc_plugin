@@ -9,6 +9,8 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.FloatEntityData;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.form.response.FormResponseCustom;
+import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.TextFormat;
@@ -17,6 +19,7 @@ import idk.plugin.npc.NPC;
 import idk.plugin.npc.entities.EntityNPC;
 import idk.plugin.npc.metadata.GsNpcMetadata;
 import io.netty.util.internal.ThreadLocalRandom;
+import ru.nukkitx.forms.CustomFormResponse;
 import ru.nukkitx.forms.elements.CustomForm;
 
 import javax.imageio.ImageIO;
@@ -107,182 +110,7 @@ public class NpcCommand extends Command {
         switch (args[0].toLowerCase()) {
             case "spawn":
             case "create":
-                CustomForm customForm = new CustomForm("§l§8Create NPC")
-                        .addDropDown("§l§7Entity Type", entityList, 16)
-                        .addInput("§l§7Entity Name")
-                        .addInput("§l§7Custom Skin")
-                        .addSlider("Size",1,100,1,10)
-                        .addSlider("Bounding Box Divisor",0,1000,1,250)
-                        .addToggle("§l§fRotаtion", true)
-                        .addToggle("§l§fNametag visibilitу", true)
-                        .addInput("§l§7Commands (Across ,)", "cmd1, cmd2, cmd3")
-                        .addToggle("§l§fExecute by playеr", true)
-                        .addLabel("\n§l§7If the npc is a Human:")
-                        .addToggle("§l§fUsе itеms on you", false);
-
-                customForm.send(player, (target, form, data) -> {
-                    if (data == null) return;
-
-                    String entityType = (String) data.get(0);
-                    String entityName = (String) data.get(1);
-                    String customSkin = (String) data.get(2);
-                    Float scale = (Float) data.get(3);
-                    Float bbm = (Float) data.get(4);
-                    boolean isRotation = (Boolean) data.get(5);
-                    boolean visibleTag = (Boolean) data.get(6);
-                    String[] commands = ((String) data.get(7)).split(", ");
-                    boolean isPlayer = (Boolean) data.get(8);
-                    boolean hasUseItem = entityType.equals("Human") ? (Boolean) data.get(10) : false;
-
-                    EntityNPC.customBB = (scale/(bbm/10));
-
-                    Skin nsStatic = new Skin();
-                    BufferedImage skinFile = null;
-                    String filePath;
-                    Skin oldSkin = new Skin();
-
-                    if (customSkin.length() < 1) {
-                        int prots = ThreadLocalRandom.current().nextInt(0, 2); //TODO: Working?
-                        if (prots == 1) {
-                            InputStream skinSteve = getClass().getResourceAsStream("/steve.png");
-                            try {
-                                skinFile = ImageIO.read(skinSteve);
-                            } catch (IOException ioException) {
-                                ioException.printStackTrace();
-                            }
-                        }
-                        else{
-                            InputStream skinAlex = getClass().getResourceAsStream("/alex.png");
-                            try {skinFile = ImageIO.read(skinAlex);}
-                            catch (IOException ioException) {ioException.printStackTrace();}
-
-
-                            oldSkin.setSkinData(skinFile);
-                            player.setSkin(oldSkin);
-                            player.getServer().updatePlayerListData(playerUniqueId, player.getId(), player.getName(), oldSkin);
-                            nsStatic = oldSkin;
-                        }
-                    }
-                    else {
-                        String nameError = new StringBuilder().append(TextFormat.RED + "No " + args[0] + "file found in " + Loader.plugin.skinsDirectory.toString()).append(". Be sure to include the file extension when specifying a skin (e.g. 'Herobrine.png', rather than 'Herobrine''.)").toString();
-                        try {
-                            filePath = Loader.plugin.skinsDirectory.toString().concat("\\").concat(customSkin);
-                            File skinPath = (new File(filePath));
-                            if (skinPath.exists()) {skinFile = ImageIO.read(skinPath);}
-                            else{sender.sendMessage(nameError);}
-                        } catch (IOException ioException) {
-                            sender.sendMessage(nameError);
-                        }
-
-                        Skin newSkin = new Skin();
-
-                        newSkin.setSkinData(skinFile);
-
-                        player.setSkin(newSkin);
-                        player.getServer().updatePlayerListData(playerUniqueId, player.getId(), player.getName(), newSkin);
-
-                        nsStatic = newSkin;
-                    }
-                    CompoundTag compoundTag;
-
-                    if(entityType != "Human"){
-                        compoundTag = NPC.nbt(new Object[]{player, entityType, commands, isPlayer, isRotation});
-                    }
-                    else {
-                        compoundTag = nbt(player, entityType, commands, isPlayer, isRotation);
-                    }
-
-                    Entity entity = Entity.createEntity(entityType + "NPC", player.chunk, compoundTag);
-
-                    if (!entityName.replace(" ", "").equals("")) {
-                        String trueEntityName = entityName.replace("¦", "\n");
-                        entity.setNameTag(trueEntityName);
-                    }
-                    else {entity.setNameTag("");}
-
-                    entity.setNameTagVisible(visibleTag);
-                    entity.setNameTagAlwaysVisible(visibleTag);
-
-                    entity.setScale((scale / 10));
-                    entity.namedTag.putFloat("scale", ((scale / 10)));
-
-                    entity.setDataProperty(new FloatEntityData(54, (scale/(bbm/10))), true);
-                    entity.setDataProperty(new FloatEntityData(53, (scale/(bbm/10))), true);
-
-                    if (entityType.equals("Human")) {
-                        EntityHuman human = (EntityHuman) entity;
-
-                        if (hasUseItem) {
-                            PlayerInventory inventory = player.getInventory();
-                            PlayerInventory humanInventory = human.getInventory();
-
-                            humanInventory.setContents(inventory.getContents());
-                        }
-                    }
-
-                    sender.sendMessage("§fNPC §aspawned§f with ID §e" + entity.getId() + " §fand the name §b\"§f" + entity.getName() + "§b\"");
-
-                    player.getServer().updatePlayerListData(playerUniqueId, player.getId(), player.getName(), nsStatic);
-
-                    player.hidePlayer(player);
-                    player.showPlayer(player);
-
-                    entity.spawnToAll();
-
-                    //if(entityType == "Human"){entity.recalculateBoundingBox();}
-                    if (entityType == "Human") {entity.recalculateBoundingBox();}
-
-                    //entity.setDataProperty(new FloatEntityData(54, (scale/(bbm/10))), true);
-                    //entity.setDataProperty(new FloatEntityData(53, (scale/(bbm/10))), true);
-
-                    Object o = (scale/(bbm/10));
-
-                    GsNpcMetadata mdv = new GsNpcMetadata(Loader.plugin,o);
-
-                    player.sendMessage(mdv.asString());
-
-                    entity.setMetadata("bb", mdv);
-
-                    entity.namedTag.putFloat("bb",(scale/(bbm/10)));
-
-                    /*Double miX = entity.boundingBox.getMinX();
-                    Double miY = entity.boundingBox.getMinY();
-                    Double miZ = entity.boundingBox.getMinZ();
-
-                    Double maX = entity.boundingBox.getMaxX();
-                    Double maY = entity.boundingBox.getMaxY();
-                    Double maZ = entity.boundingBox.getMaxZ();
-
-                    miX = (miX-bbm);
-                    miY = (miY-bbm);
-                    miZ = (miZ-bbm);
-                    maX = (maX+bbm);
-                    maY = (maY+bbm);
-                    maZ = (maZ+bbm);
-
-                    entity.boundingBox.setBounds(miX,miY,miZ,maX,maY,maZ);*/
-
-
-                    //entity.getBoundingBox()
-
-                    //entity.scheduleUpdate();
-                    //entity.setMetadata();
-
-
-
-                    //MetadataValue metaAdd = new MetadataValue();
-
-                    //entity.setMetadata(54,(scale/(bbm/10)));
-
-                    //entity.
-
-                    //entity.boundingBox.;
-
-                    //entity.getMetadata()
-                    //entity.setMetadata();
-
-                });
-
+                sendCreateNPC(player);
                 break;
 
             case "getid":
@@ -298,7 +126,7 @@ public class NpcCommand extends Command {
 
             case "list":
             case "entities":
-                sender.sendMessage("§aAvailable entities: §3" + entityList.toString());
+                sender.sendMessage("§aAvailable entities: §3" + entityList);
                 break;
 
             case "tphere":
@@ -334,4 +162,152 @@ public class NpcCommand extends Command {
         }
         return false;
     }
+
+    private void sendCreateNPC(Player player) {
+        CustomForm customForm = new CustomForm("§l§8Create NPC")
+                .addDropDown("§l§7Entity Type", entityList, 16)
+                .addInput("§l§7Entity Name")
+                .addInput("§l§7Custom Skin")
+                .addSlider("Size",1,100,1,10)
+                .addSlider("Bounding Box Divisor",0,1000,1,250)
+                .addToggle("§l§fRotаtion", true)
+                .addToggle("§l§fNametag visibilitу", true)
+                .addInput("§l§7Commands (Across ,)", "cmd1, cmd2, cmd3")
+                .addToggle("§l§fExecute by playеr", true)
+                .addLabel("\n§l§7If the npc is a Human:")
+                .addToggle("§l§fUsе itеms on you", false);
+        FormWindowCustom fwc = (FormWindowCustom) customForm.getForm();
+        CustomFormResponse cfr = (player1, formWindowCustom, i) -> {};
+
+        fwc.addHandler((target, data) -> {
+
+            if (fwc.wasClosed()) {
+                return;
+            }
+
+            try {
+                if (fwc.getResponse() == null) return;
+
+                FormResponseCustom response = fwc.getResponse();
+
+                String entityType = response.getDropdownResponse(0).getElementContent();
+                String entityName = response.getInputResponse(1);
+                String customSkin = response.getInputResponse(2);
+                float scale = response.getSliderResponse(3);
+                float bbm = response.getSliderResponse(4);
+                boolean isRotation = response.getToggleResponse(5);
+                boolean visibleTag = response.getToggleResponse(6);
+                String[] commands = (response.getInputResponse(7)).split(", ");
+                boolean isPlayer = response.getToggleResponse(8);
+                boolean hasUseItem = entityType.equals("Human") && response.getToggleResponse(10);
+
+                //Creating Entity, Skin, NBT data and Bounding Box preset
+                EntityNPC.customBB = (scale/(bbm/10));
+                Skin nsStatic = setSkin(player, customSkin);
+                CompoundTag compoundTag = NPC.nbt(player, entityType, commands, isPlayer, isRotation);
+                Entity newEntity = Entity.createEntity(entityType + "NPC", player.chunk, compoundTag);
+
+                //Name
+                if (!entityName.replace(" ", "").equals("")) {
+                    String trueEntityName = entityName.replace("¦", "\n");
+                    newEntity.setNameTag(trueEntityName);
+                }
+                else {newEntity.setNameTag("");}
+
+                //NameTag Visibility
+                newEntity.setNameTagVisible(visibleTag);
+                newEntity.setNameTagAlwaysVisible(visibleTag);
+
+                //Scale
+                newEntity.setScale((scale / 10));
+                newEntity.namedTag.putFloat("scale", ((scale / 10)));
+
+                //Bounding Box
+                newEntity.setDataProperty(new FloatEntityData(54, (scale/(bbm/10))), true);
+                newEntity.setDataProperty(new FloatEntityData(53, (scale/(bbm/10))), true);
+
+                //Inventory
+                if (entityType.equals("Human")) {
+                    EntityHuman human = (EntityHuman) newEntity;
+
+                    if (hasUseItem) {
+                        PlayerInventory inventory = player.getInventory();
+                        PlayerInventory humanInventory = human.getInventory();
+
+                        humanInventory.setContents(inventory.getContents());
+                    }
+                }
+
+                //Spawning
+                player.sendMessage("§fNPC §aspawned§f with ID §e" + newEntity.getId() + " §fand the name §b\"§f" + newEntity.getName() + "§b\"");
+                player.getServer().updatePlayerListData(player.getUniqueId(), player.getId(), player.getName(), nsStatic);
+                player.hidePlayer(player);
+                player.showPlayer(player);
+                newEntity.spawnToAll();
+
+                if (Objects.equals(entityType, "Human")) {newEntity.recalculateBoundingBox();}
+
+                Object o = (scale/(bbm/10));
+
+                GsNpcMetadata mdv = new GsNpcMetadata(Loader.plugin,o);
+
+                player.sendMessage(mdv.asString());
+
+                newEntity.setMetadata("bb", mdv);
+
+                newEntity.namedTag.putFloat("bb",(scale/(bbm/10)));
+
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                player.sendMessage("§cUnexpected error.");
+            }
+        });
+
+        customForm.send(player, cfr);
+
+    }
+
+    private Skin setSkin(Player player, String customSkin) {
+
+        BufferedImage skinFile = null;
+        String filePath;
+        Skin oldSkin = new Skin();
+
+        if (customSkin.length() < 1) {
+            if (ThreadLocalRandom.current().nextInt(0, 2) == 1) {
+                InputStream skinSteve = getClass().getResourceAsStream("/steve.png");
+                try {skinFile = ImageIO.read(skinSteve);}
+                catch (IOException ioException) {ioException.printStackTrace(); }
+            } else {
+                InputStream skinAlex = getClass().getResourceAsStream("/alex.png");
+                try {skinFile = ImageIO.read(skinAlex);}
+                catch (IOException ioException) {ioException.printStackTrace();}
+            }
+            oldSkin.setSkinData(skinFile);
+            player.setSkin(oldSkin);
+            player.getServer().updatePlayerListData(player.getUniqueId(), player.getId(), player.getName(), oldSkin);
+            return oldSkin;
+        }
+        else {
+            String nameError = TextFormat.RED + "No " + customSkin + " file found in " + Loader.plugin.skinsDirectory.toString() + ". Be sure to include the file extension when specifying a skin (e.g. 'Herobrine.png', rather than 'Herobrine'.)";
+            try {
+                filePath = Loader.plugin.skinsDirectory.toString().concat("\\").concat(customSkin);
+                File skinPath = (new File(filePath));
+                if (skinPath.exists()) {skinFile = ImageIO.read(skinPath);}
+                else{player.sendMessage(nameError);}
+            } catch (IOException ioException) {
+                player.sendMessage(nameError);
+            }
+
+            Skin newSkin = new Skin();
+
+            newSkin.setSkinData(skinFile);
+
+            player.setSkin(newSkin);
+            player.getServer().updatePlayerListData(player.getUniqueId(), player.getId(), player.getName(), newSkin);
+
+            return newSkin;
+        }
+    }
+
 }
