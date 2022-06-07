@@ -383,7 +383,6 @@ public class EntityDamageListener implements Listener {
             FormWindowModal fwm = (FormWindowModal) modalForm.getForm();
             ModalFormResponse mfr = (player1, formWindowModal, i) -> {};
             fwm.addHandler((target1, data1) -> {
-                player.sendMessage("Button ID: " + fws.getResponse().getClickedButtonId());
                 if (fwm.getResponse().getClickedButtonId() == 0) {
                     StringTag command = tagList.get(fws.getResponse().getClickedButtonId());
                     entity.namedTag.getList(listName, StringTag.class).remove(command);
