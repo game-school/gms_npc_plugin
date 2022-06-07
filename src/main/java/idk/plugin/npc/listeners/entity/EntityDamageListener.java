@@ -11,7 +11,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.form.response.FormResponseCustom;
-import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
@@ -30,7 +29,6 @@ import java.util.*;
 import java.util.List;
 
 import static idk.plugin.npc.NPC.*;
-import static java.lang.String.valueOf;
 
 public class EntityDamageListener implements Listener {
 
@@ -127,17 +125,19 @@ public class EntityDamageListener implements Listener {
                 case 5: //Kill
                     ModalForm modalForm = new ModalForm("§l§8Delete a command");
                     modalForm.setButton1("§l§cYes").setButton2("§l§aNo");
-                    FormWindow modalFormWindow = modalForm.getForm();
-                    ModalFormResponse mfr = (player2, formWindowModal, i) -> {};
-                    modalForm.send(player, mfr);
-                    modalFormWindow.addHandler((target1, data1) -> {
-                        if (data1 == 0) {
+                    FormWindowModal fwm = (FormWindowModal) modalForm.getForm();
+                    ModalFormResponse mfr = (player2, formWindowModal, i2) -> {};
+                    //FormWindow modalFormWindow = modalForm.getForm();
+                    //ModalFormResponse mfr = (player2, formWindowModal, i) -> {};
+                    fwm.addHandler((target1, data1) -> {
+                        if (data1 == 3) {
                             entity.close();
                             player.sendMessage("§aEntity removed");
                             return;
                         }
                         this.sendNPCEditingForm(player, entity);
                     });
+                    modalForm.send(player, mfr);
                     break;
                 case 6: //Replace inventory
                     EntityHuman human = (EntityHuman) entity;
@@ -182,7 +182,7 @@ public class EntityDamageListener implements Listener {
             }
 
             try {
-                String name = fwc.getResponse().getInputResponse(0);;//data.get(0).toString();
+                String name = fwc.getResponse().getInputResponse(0);//data.get(0).toString();
                 entity.setNameTag(name);
                 entity.respawnToAll();
             } catch (Exception exception) {
@@ -259,7 +259,7 @@ public class EntityDamageListener implements Listener {
         String gramType = type.replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2");
 
         SimpleForm simpleForm = new SimpleForm("§l§8Default Bounding Box")
-                .setContent("§fRevert Bounding Box size of:\n\n Name: §e" + entity.getName() + "\n §fNPC type: §e" + gramType + "\n\n§fto default for scale §d" + (valueOf(entity.getScale())) + "§f?")
+                .setContent("§fRevert Bounding Box size of:\n\n Name: §e" + entity.getName() + "\n §fNPC type: §e" + gramType + "\n\n§fto default for scale §d" + (entity.getScale()) + "§f?")
                 .addButton("Yes")
                 .addButton("No");
 
