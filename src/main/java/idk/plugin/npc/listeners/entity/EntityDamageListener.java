@@ -340,6 +340,7 @@ public class EntityDamageListener implements Listener {
 
                         sendCommands(target1, entity);
                     });
+                    customForm.send(player, cfr);
                     break;
             }
         });
@@ -383,7 +384,7 @@ public class EntityDamageListener implements Listener {
             ModalFormResponse mfr = (player1, formWindowModal, i) -> {};
             fwm.addHandler((target1, data1) -> {
                 if (fwm.getResponse().getClickedButtonId() == 0) {
-                    StringTag command = tagList.get(data);
+                    StringTag command = tagList.get(fws.getResponse().getClickedButtonId());
                     entity.namedTag.getList(listName, StringTag.class).remove(command);
                     player.sendMessage("§aCommand §e" + command.data + "§a removed");
                 } else {
