@@ -274,7 +274,7 @@ public class NpcCommand extends Command {
         Skin oldSkin = new Skin();
 
         if (customSkin.length() < 1) {
-            if (ThreadLocalRandom.current().nextInt(0, 1) == 2) {
+            if (ThreadLocalRandom.current().nextInt(0, 2) == 1) {
                 InputStream skinSteve = getClass().getResourceAsStream("/steve.png");
                 try {skinFile = ImageIO.read(skinSteve);}
                 catch (IOException ioException) {ioException.printStackTrace(); }
