@@ -130,7 +130,7 @@ public class EntityDamageListener implements Listener {
                     //FormWindow modalFormWindow = modalForm.getForm();
                     //ModalFormResponse mfr = (player2, formWindowModal, i) -> {};
                     fwm.addHandler((target1, data1) -> {
-                        if (data1 == 3) {
+                        if (fwm.getResponse().getClickedButtonId() == 0) {
                             entity.close();
                             player.sendMessage("§aEntity removed");
                             return;
